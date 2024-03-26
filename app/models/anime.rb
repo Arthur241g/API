@@ -1,40 +1,20 @@
-require 'csv'
-require 'activerecord-import'
-
 class Anime < ApplicationRecord
-  validates :Title, :Score, presence: true
-
-  # Title of the anime
-  attribute :Title, :string
-
-  # Rank of the anime (e.g., on MyAnimeList)
-  attribute :Rank, :float
-
-  # Type of anime (e.g., TV series, movie)
-  attribute :Type, :string
-
-  # Number of episodes (if applicable)
-  attribute :Episodes, :integer
-
-  # Airing date or date range
-  attribute :Aired, :date
-
-  # Number of list members on a platform (e.g., MyAnimeList)
-  attribute :Members, :float
-
-  # URL of the anime page on a platform
-  attribute :Page_url, :string
-
-  # URL of the anime image
-  attribute :image_url, :string
-
-  # Overall score of the anime (e.g., on MyAnimeList)
-  attribute :Score, :float
-
-  def self.import(anime)
-    Anime.import(CSV.read('db/anime.csv', headers: true))
+    def self.import_from_csv
+      begin
+        ActiveRecord::Base.transaction do
+          CSV.foreach('db/anime.csv', headers: true) do |row|
+            # Remplacez les valeurs vides par nil
+            row_hash = row.to_h.transform_values { |value| value.blank? ? nil : value }
+            anime = Anime.new(row_hash)
+            unless anime.save
+              raise ActiveRecord::Rollback, "Erreur lors de l'importation de la ligne : #{anime.errors.full_messages.join(', ')}"
+            end
+          end
+        end
+        puts 'Données importées avec succès !'
+      rescue StandardError => e
+        puts "Erreur lors de l'importation : #{e.message}"
+      end
+    end
   end
-end
-
-  #Import data from CSV
-  Anime.import('db/anime.csv')
+  

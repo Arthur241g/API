@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  Title: MyString
+  Rank: 1.5
+  Type: MyString
+  Episodes: 1
+  Aired: 2024-03-25
+  Members: 1.5
+  Page_url: MyString
+  image_url: MyString
+  Score: 1.5
+
+two:
+  Title: MyString
+  Rank: 1.5
+  Type: MyString
+  Episodes: 1
+  Aired: 2024-03-25
+  Members: 1.5
+  Page_url: MyString
+  image_url: MyString
+  Score: 1.5

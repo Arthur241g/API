@@ -1,37 +1,36 @@
-class AnimeController < ApplicationController
-    # Action pour lister tous les Animes
+class AnimesController < ApplicationController
     def index
-      @anime = Anime.all
-      render json: @anime
+      @animes = Anime.all
+      render json: @animes
     end
   
-    # Action pour afficher un anime spécifique
     def show
-      @anime = Anime.find(params[:id])
-      render json: @anime
+      @anime = Anime.find_by_id(params[:id])
+      if @anime.nil?
+        render json: { error: "Anime introuvable" }, status: :not_found
+      else
+        render json: @anime
+      end
     end
   
-    # Action pour créer un nouvel anime
     def create
       @anime = Anime.new(anime_params)
       if @anime.save
         render json: @anime, status: :created
       else
-        render json: @anime.errors, status: :unprocessable_entity
+        render json: { errors: @anime.errors.full_messages }, status: :unprocessable_entity
       end
     end
   
-    # Action pour mettre à jour un anime existant
     def update
       @anime = Anime.find(params[:id])
       if @anime.update(anime_params)
         render json: @anime
       else
-        render json: @anime.errors, status: :unprocessable_entity
+        render json: { errors: @anime.errors.full_messages }, status: :unprocessable_entity
       end
     end
   
-    # Action pour supprimer un anime
     def destroy
       @anime = Anime.find(params[:id])
       @anime.destroy
