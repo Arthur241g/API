@@ -48,3 +48,7 @@ end
 gem 'csv_importer'
 
 gem 'activerecord-import'
+
+gem 'redis'
+
+#gem 'devise_token_auth'

@@ -1,7 +1,9 @@
 class AnimesController < ApplicationController
     def index
-      @animes = Anime.all
-      render json: @animes
+        @animes = Rails.cache.fetch('all_animes', expires_in: 1.hour) do
+          Anime.all
+        end
+        render json: @animes
     end
   
     def show
@@ -34,6 +36,7 @@ class AnimesController < ApplicationController
     def destroy
       @anime = Anime.find(params[:id])
       @anime.destroy
+      Rails.cache.delete("anime_#{anime.id}")
       head :no_content
     end
   
