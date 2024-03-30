@@ -8,6 +8,9 @@ Bundler.require(*Rails.groups)
 
 module QwasarApi
   class Application < Rails::Application
+    # Manage the sessions conflicts
+    config.middleware.use ActionDispatch::Session::CookieStore
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 

@@ -18,3 +18,5 @@ class Anime < ApplicationRecord
     end
   end
   
+
+  #importer toutes les donnees via cette commande:  Anime.import_from_csv 

@@ -1,4 +1,7 @@
 class AnimesController < ApplicationController
+    before_action :authenticate_user!, except: [:index, :show]
+   
+
     def index
         @animes = Rails.cache.fetch('all_animes', expires_in: 1.hour) do
           Anime.all
