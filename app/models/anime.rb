@@ -1,3 +1,5 @@
+require 'csv'
+
 class Anime < ApplicationRecord
     def self.import_from_csv
       begin
@@ -16,9 +18,6 @@ class Anime < ApplicationRecord
         puts "Erreur lors de l'importation : #{e.message}"
       end
     end
-
-    Anime.import_from_csv
-    
   end
   
 
