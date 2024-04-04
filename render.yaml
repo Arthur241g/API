@@ -5,7 +5,7 @@ databases:
     plan: free
 
 services:
-  - type: api
+  - type: web
     name: API_Anime
     runtime: ruby
     plan: free
