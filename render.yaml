@@ -1,5 +1,5 @@
 databases:
-  - name: Anime_API
+  - name: anime
     databaseName: anime
     user: mysite
     plan: free
