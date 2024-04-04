@@ -1,6 +1,6 @@
 databases:
   - name: Anime_API
-    databaseName: anime
+    databaseName: animes
     user: mysite
     plan: free
 
