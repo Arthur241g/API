@@ -1,0 +1,89 @@
+#%RAML 1.0
+title: API Animes
+baseUri: https://localhost:3000/anime_api
+version: 1.0
+
+types:
+  Anime:
+    type: object
+    properties:
+      id: integer
+      Title: string
+      Rank: integer
+      Type: string
+      Episodes: integer
+      Aired: string
+      Members: integer
+      Page_url: string
+      image_url: string
+      Score: number
+
+/animes:
+  get:
+    description: Retrieve the list of animes
+    responses:
+      200:
+        body:
+          type: Anime[]
+  post:
+    description: Create a new anime (authentification required)
+    securedBy: [userAuth]
+    body:
+      type: Anime
+    responses:
+      201:
+        body:
+          type: Anime
+      422:
+        body:
+          type: object
+          properties:
+            errors: string[]
+
+/animes/{id}:
+  get:
+    description: Retrieve an anime by its ID
+    parameters:
+      - id: integer
+        required: true
+    responses:
+      200:
+        body:
+          type: Anime
+      404:
+        body:
+          type: object
+          properties:
+            error: string
+  put:
+    description: Update an anime by its ID (authentification required)
+    securedBy: [userAuth]
+    parameters:
+      - id: integer
+        required: true
+      - anime:
+        type: Anime
+        required: true
+    responses:
+      200:
+        body:
+          type: Anime
+      422:
+        body:
+          type: object
+          properties:
+            errors: string[]
+  delete:  # New DELETE method
+    description: Delete an anime by its ID (authentification required)
+    securedBy: [userAuth]
+    parameters:
+      - id: integer
+        required: true
+    responses:
+      204:
+        description: Anime successfully deleted
+      404:
+        body:
+          type: object
+          properties:
+            error: string
