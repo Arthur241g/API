@@ -50,3 +50,5 @@ gem 'activerecord-import'
 gem 'redis'
 
 gem 'devise'
+
+gem 'omniauth-auth0'
