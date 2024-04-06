@@ -3,7 +3,7 @@ FROM ruby:3.2.2
 
 # Installez Node.js et Yarn (nécessaires pour la compilation des assets Rails)
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
-RUN apt-get update -qq && apt-get install -y ruby
+#RUN apt-get update -qq && apt-get install -y ruby
 
 # Définissez le répertoire de travail
 WORKDIR /API
