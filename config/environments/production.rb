@@ -61,7 +61,7 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # config/environments/production.rb
-  config.hosts << "animeapi-y5somzm0.b4a.run"
+  #config.hosts << "animeapi-y5somzm0.b4a.run"
 
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
