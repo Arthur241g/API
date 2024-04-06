@@ -1,64 +1,32 @@
-# syntax = docker/dockerfile:1
+# À partir de l'image officielle Ruby
+FROM ruby:3.2.2
 
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.2.2
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+# Installez Node.js et Yarn (nécessaires pour la compilation des assets Rails)
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
+RUN apt-get update -qq && apt-get install -y ruby
 
-# Rails app lives here
-WORKDIR /rails
+# Définissez le répertoire de travail
+WORKDIR /API
 
-# Set production environment
-ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+# Ajoutez le Gemfile et le Gemfile.lock à l'image
+COPY Gemfile /API/Gemfile
+COPY Gemfile.lock /API/Gemfile.lock
+COPY import.rb /API/import.rb
 
+# Installez les gems
+RUN bundle install
 
-# Throw-away build stage to reduce size of final image
-FROM base as build
+# Exécutez les migrations
+RUN bundle exec rails db:migrate
 
-# Install packages needed to build gems
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libvips pkg-config
+# import data from csv
+#RUN bundle exec ruby import.rb
 
-# Install application gems
-COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    bundle exec bootsnap precompile --gemfile
+# Copiez le reste de l'application dans l'image
+COPY . /API
 
-# Copy application code
-COPY . .
-
-# Precompile bootsnap code for faster boot times
-RUN bundle exec bootsnap precompile app/ lib/
-
-# Adjust binfiles to be executable on Linux
-RUN chmod +x bin/* && \
-    sed -i "s/\r$//g" bin/* && \
-    sed -i 's/ruby\.exe$/ruby/' bin/*
-
-
-# Final stage for app image
-FROM base
-
-# Install packages needed for deployment
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
-# Copy built artifacts: gems, application
-COPY --from=build /usr/local/bundle /usr/local/bundle
-COPY --from=build /rails /rails
-
-# Run and own only the runtime files as a non-root user for security
-RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER rails:rails
-
-# Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
-
-# Start the server by default, this can be overwritten at runtime
+# Exposez le port sur lequel le serveur Rails s'exécutera
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+
+# Définissez la commande pour démarrer le serveur
+CMD ["rails", "server", "-b", "0.0.0.0"]
