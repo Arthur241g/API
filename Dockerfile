@@ -29,4 +29,4 @@ COPY . /API
 EXPOSE 3000
 
 # Définissez la commande pour démarrer le serveur
-CMD ["rails", "server"]
+CMD ["rails", "server", "-b", "0.0.0.0"]
